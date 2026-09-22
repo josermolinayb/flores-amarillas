@@ -525,6 +525,36 @@ html, body {
   transform: translateY(-2px);
 }
 
+/* Botón Spotify Oficial */
+.spotify-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #1db954;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: var(--radius-btn);
+  padding: 12px 24px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(29, 185, 84, 0.35);
+  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 280px;
+}
+
+.spotify-btn:hover {
+  background: #1ed760;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(29, 185, 84, 0.5);
+}
+
+.spotify-icon {
+  flex-shrink: 0;
+}
+
 /* Animaciones Generales */
 @keyframes float-gentle {
   0%, 100% { transform: translateY(0); }

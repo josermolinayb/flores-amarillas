@@ -580,12 +580,29 @@ document.addEventListener('DOMContentLoaded', () => {
     currentTimer = setTimeout(scheduleNextNote, durationMs);
   }
 
+  const bgAudio = new Audio('musica.mp3');
+  bgAudio.loop = true;
+
   function startGentleMusic() {
-    initAudioContext();
+    initAudioContext(); // Desbloqueo síncrono del Web Audio en el gesto del usuario
     isMusicPlaying = true;
     updateMusicUI(true);
-    if (currentTimer) clearTimeout(currentTimer);
-    scheduleNextNote();
+
+    // Intentar reproducir archivo mp3 original si el usuario lo colocó
+    const playPromise = bgAudio.play();
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        // Archivo mp3 encontrado y reproduciendo voz original
+        if (currentTimer) clearTimeout(currentTimer);
+      }).catch(() => {
+        // Si no está el archivo mp3, suena la melodía de Floricienta sintetizada
+        if (currentTimer) clearTimeout(currentTimer);
+        scheduleNextNote();
+      });
+    } else {
+      if (currentTimer) clearTimeout(currentTimer);
+      scheduleNextNote();
+    }
   }
 
   function stopGentleMusic() {
@@ -595,6 +612,9 @@ document.addEventListener('DOMContentLoaded', () => {
       clearTimeout(currentTimer);
       currentTimer = null;
     }
+    try {
+      bgAudio.pause();
+    } catch (e) {}
   }
 
   function updateMusicUI(playing) {
