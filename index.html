@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Flores Amarillas de Primavera | Para Sabrina, Solana y Felicitas</title>
+  
+  <!-- Favicon con flor amarilla -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌻</text></svg>">
+
+  <!-- Google Fonts: Caligrafía de lujo y tipografía editorial -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Canvas de fondo para pétalos flotantes y destellos de luz -->
+  <canvas id="petals-canvas"></canvas>
+
+  <!-- Botón flotante de música ambiental -->
+  <button id="music-toggle" class="music-btn" aria-label="Control de música" title="Música ambiental">
+    <span class="music-icon" id="music-icon">🎵</span>
+    <span class="music-label" id="music-label">Música</span>
+  </button>
+
+  <main class="app-container">
+
+    <!-- ==================== PANTALLA 1: PORTADA / OBSEQUIO ==================== -->
+    <section id="step-intro" class="card-screen active">
+      <div class="delicate-border">
+        <div class="spring-tag">✦ 21 de Septiembre ✦</div>
+        <h2 class="intro-subtitle">El comienzo de la primavera</h2>
+        <div class="divider-flower">
+          <span class="line"></span>
+          <span class="icon">❀</span>
+          <span class="line"></span>
+        </div>
+        <h1 class="intro-title">Para las mujeres de mi vida</h1>
+        <p class="intro-caption">
+          En este día especial, florece una tradición que lleva luz, calidez y un homenaje sincero directo a sus corazones.
+        </p>
+
+        <div class="gift-box-wrapper">
+          <div class="gift-box-glow"></div>
+          <div class="gift-icon">🌼</div>
+        </div>
+
+        <button id="btn-open-gift" class="primary-btn pulse-glow">
+          <span class="btn-text">Abrí tu Obsequio</span>
+          <span class="btn-sparkle">✨</span>
+        </button>
+
+        <p class="tap-hint">Tocá para abrir y vivir la experiencia</p>
+      </div>
+    </section>
+
+    <!-- ==================== PANTALLA 2: SABRINA ==================== -->
+    <section id="step-sabrina" class="card-screen">
+      <div class="delicate-border">
+        <div class="step-indicator">Paso 1 de 3</div>
+        <div class="rose-stage" id="rose-sabrina-stage">
+          <!-- SVG Rosa Amarilla insertada por JS -->
+          <div class="flower-container flower-bloom" id="flower-sabrina"></div>
+        </div>
+
+        <div class="dedication-content">
+          <span class="for-label">Con todo mi amor para</span>
+          <h2 class="person-name">Sabrina</h2>
+          <div class="divider-flower">
+            <span class="line"></span>
+            <span class="icon">💛</span>
+            <span class="line"></span>
+          </div>
+          <p class="poetic-message">
+            «A mi amor y compañera de cada día. Gracias por ser el refugio, la luz y la belleza que florece en nuestro hogar en cada estación. Esta flor amarilla es un homenaje a tu calidez infinita, a tu fortaleza y a todo lo que iluminás simplemente existiendo a mi lado.»
+          </p>
+        </div>
+
+        <button class="primary-btn next-btn" data-next="step-solana">
+          <span>Continuar el camino</span>
+          <span class="arrow-icon">→</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ==================== PANTALLA 3: SOLANA ==================== -->
+    <section id="step-solana" class="card-screen">
+      <div class="delicate-border">
+        <div class="step-indicator">Paso 2 de 3</div>
+        <div class="rose-stage" id="rose-solana-stage">
+          <!-- SVG Rosa Amarilla insertada por JS -->
+          <div class="flower-container flower-bloom" id="flower-solana"></div>
+        </div>
+
+        <div class="dedication-content">
+          <span class="for-label">Con todo mi amor para</span>
+          <h2 class="person-name">Solana</h2>
+          <div class="divider-flower">
+            <span class="line"></span>
+            <span class="icon">💛</span>
+            <span class="line"></span>
+          </div>
+          <p class="poetic-message">
+            «A mi sol, que con su energía y alegría enciende sonrisas y transforma cada día en primavera. Que esta flor amarilla te recuerde siempre la luz tan brillante y única que llevás adentro, capaz de iluminar cualquier camino que elijas andar.»
+          </p>
+        </div>
+
+        <button class="primary-btn next-btn" data-next="step-felicitas">
+          <span>Siguiente flor</span>
+          <span class="arrow-icon">→</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ==================== PANTALLA 4: FELICITAS ==================== -->
+    <section id="step-felicitas" class="card-screen">
+      <div class="delicate-border">
+        <div class="step-indicator">Paso 3 de 3</div>
+        <div class="rose-stage" id="rose-felicitas-stage">
+          <!-- SVG Rosa Amarilla insertada por JS -->
+          <div class="flower-container flower-bloom" id="flower-felicitas"></div>
+        </div>
+
+        <div class="dedication-content">
+          <span class="for-label">Con todo mi amor para</span>
+          <h2 class="person-name">Felicitas</h2>
+          <div class="divider-flower">
+            <span class="line"></span>
+            <span class="icon">💛</span>
+            <span class="line"></span>
+          </div>
+          <p class="poetic-message">
+            «A mi dulce felicidad, que llena la vida de ternura, risas cristalinas y momentos que atesoro por siempre. Que esta flor amarilla acompañe tus sueños más lindos y te abrace con todo el cariño de mi corazón.»
+          </p>
+        </div>
+
+        <button class="primary-btn next-btn" data-next="step-final">
+          <span>Ver el ramillete completo</span>
+          <span class="arrow-icon">✨</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ==================== PANTALLA 5: RAMILLETE & CIERRE ==================== -->
+    <section id="step-final" class="card-screen">
+      <div class="delicate-border final-border">
+        
+        <div class="bouquet-stage" id="bouquet-stage">
+          <!-- Ramillete insertado por JS -->
+          <div class="bouquet-wrapper" id="bouquet-container"></div>
+        </div>
+
+        <div class="trio-names">
+          <span>Sabrina</span>
+          <span class="dot">✦</span>
+          <span>Solana</span>
+          <span class="dot">✦</span>
+          <span>Felicitas</span>
+        </div>
+
+        <div class="quote-wrapper">
+          <div class="quote-mark">“</div>
+          <blockquote class="final-quote">
+            Las flores son digitales pero el corazón el real
+          </blockquote>
+          <div class="quote-mark right">”</div>
+        </div>
+
+        <p class="final-wish">
+          ¡Feliz 21 de Septiembre y muy feliz primavera!<br>
+          Gracias por llenar mi mundo de luz y ser las flores más bellas de mi vida.
+        </p>
+
+        <div class="signature">
+          <p class="sign-text">Siempre con ustedes,</p>
+          <div class="heart-pulse">💛</div>
+        </div>
+
+        <div class="final-actions">
+          <button id="btn-replay" class="secondary-btn">
+            <span>↺ Revivir el obsequio</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Script con animaciones, física de pétalos y Web Audio -->
+  <script src="script.js"></script>
+</body>
+</html>

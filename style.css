@@ -1,0 +1,563 @@
+/* =========================================================
+   FLORES AMARILLAS DE PRIMAVERA - ESTILOS PRINCIPALES
+   Diseño de Alta Costura Digital, Delicado y Mobile-First
+   ========================================================= */
+
+:root {
+  --bg-gradient: linear-gradient(135deg, #fdfaf4 0%, #faf1df 40%, #f6e6ca 100%);
+  --gold-primary: #e6a100;
+  --gold-light: #ffd54f;
+  --gold-dark: #b27b00;
+  --gold-glow: rgba(255, 200, 50, 0.35);
+  --text-dark: #3a322d;
+  --text-muted: #74685e;
+  --text-gold: #9c6808;
+  --card-bg: rgba(255, 255, 255, 0.88);
+  --card-border: rgba(230, 161, 0, 0.25);
+  --inner-border: rgba(230, 161, 0, 0.18);
+  --shadow-soft: 0 15px 40px rgba(180, 130, 30, 0.12);
+  --shadow-elevated: 0 20px 50px rgba(180, 130, 30, 0.2);
+  --radius-card: 28px;
+  --radius-btn: 50px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Montserrat', sans-serif;
+  color: var(--text-dark);
+  background: var(--bg-gradient);
+  position: relative;
+}
+
+/* Canvas de pétalos flotantes */
+#petals-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Botón flotante de música ambiental */
+.music-btn {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-btn);
+  color: var(--text-gold);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.music-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(230, 161, 0, 0.25);
+  background: #ffffff;
+}
+
+.music-btn.playing .music-icon {
+  animation: pulse-music 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse-music {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.25) rotate(8deg); }
+}
+
+/* Contenedor de la Aplicación */
+.app-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+
+/* Pantallas / Tarjetas */
+.card-screen {
+  position: absolute;
+  width: 100%;
+  max-width: 440px;
+  max-height: 90vh;
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-elevated);
+  border: 1px solid var(--card-border);
+  padding: 12px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(24px) scale(0.96);
+  transition: opacity 0.7s cubic-bezier(0.2, 0.8, 0.2, 1),
+              transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1),
+              visibility 0.7s;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.card-screen::-webkit-scrollbar {
+  display: none;
+}
+
+.card-screen.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+/* Borde decorativo interno */
+.delicate-border {
+  border: 1px solid var(--inner-border);
+  border-radius: calc(var(--radius-card) - 6px);
+  padding: 32px 24px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  background: radial-gradient(circle at 50% 15%, rgba(255, 235, 180, 0.25) 0%, transparent 70%);
+}
+
+.final-border {
+  padding: 26px 20px;
+}
+
+/* Indicador de paso */
+.step-indicator {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--text-gold);
+  font-weight: 600;
+  margin-bottom: 8px;
+  opacity: 0.85;
+}
+
+/* Tag Primaveral */
+.spring-tag {
+  font-size: 0.75rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-gold);
+  font-weight: 600;
+  margin-bottom: 12px;
+  animation: shimmer 3s infinite ease-in-out;
+}
+
+/* Títulos y Subtítulos */
+.intro-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.intro-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.1rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text-dark);
+  margin: 10px 0 16px;
+  letter-spacing: -0.5px;
+}
+
+.intro-caption {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--text-muted);
+  max-width: 320px;
+  margin-bottom: 24px;
+}
+
+/* Divisor floral */
+.divider-flower {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 200px;
+  margin: 6px auto 12px;
+}
+
+.divider-flower .line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+}
+
+.divider-flower .icon {
+  font-size: 0.9rem;
+  color: var(--gold-primary);
+}
+
+/* Caja de regalo interactiva / Icono central */
+.gift-box-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0 28px;
+}
+
+.gift-box-glow {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.35) 0%, transparent 70%);
+  animation: pulse-glow 2.5s infinite ease-in-out;
+}
+
+.gift-icon {
+  font-size: 4.2rem;
+  filter: drop-shadow(0 8px 16px rgba(230, 161, 0, 0.3));
+  animation: float-gentle 3.5s infinite ease-in-out;
+}
+
+/* Botones principales */
+.primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #ffd54f 0%, #ffb300 50%, #f57f17 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-btn);
+  padding: 16px 36px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(245, 127, 23, 0.35);
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 290px;
+}
+
+.primary-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 14px 32px rgba(245, 127, 23, 0.45);
+}
+
+.primary-btn:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.pulse-glow {
+  animation: btn-glow 2s infinite ease-in-out;
+}
+
+@keyframes btn-glow {
+  0%, 100% {
+    box-shadow: 0 10px 25px rgba(245, 127, 23, 0.35), 0 0 0 0 rgba(255, 213, 79, 0.5);
+  }
+  50% {
+    box-shadow: 0 12px 30px rgba(245, 127, 23, 0.45), 0 0 0 10px rgba(255, 213, 79, 0);
+  }
+}
+
+.tap-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 14px;
+  opacity: 0.75;
+}
+
+/* ==================== VISTA DE LAS FLORES (SABRINA, SOLANA, FELICITAS) ==================== */
+.rose-stage {
+  width: 100%;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.flower-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Animación de floración SVG */
+.flower-bloom svg {
+  animation: blossom 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  filter: drop-shadow(0 12px 24px rgba(230, 161, 0, 0.3));
+}
+
+@keyframes blossom {
+  0% {
+    transform: scale(0.35) rotate(-15deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.06) rotate(3deg);
+    opacity: 0.95;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.dedication-content {
+  margin-bottom: 22px;
+}
+
+.for-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.person-name {
+  font-family: 'Alex Brush', cursive;
+  font-size: 3.4rem;
+  color: var(--text-gold);
+  line-height: 1.1;
+  margin-bottom: 6px;
+  text-shadow: 0 2px 10px rgba(255, 215, 0, 0.25);
+}
+
+.poetic-message {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.18rem;
+  font-style: italic;
+  line-height: 1.75;
+  color: #38302b;
+  padding: 0 8px;
+}
+
+/* Botón Siguiente */
+.next-btn {
+  margin-top: 4px;
+}
+
+.arrow-icon {
+  font-size: 1.2rem;
+  transition: transform 0.2s ease;
+}
+
+.next-btn:hover .arrow-icon {
+  transform: translateX(4px);
+}
+
+/* ==================== PANTALLA FINAL: RAMILLETE Y CITA ==================== */
+.bouquet-stage {
+  width: 100%;
+  height: 210px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.bouquet-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bouquet-wrapper svg {
+  animation: bouquet-appear 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  filter: drop-shadow(0 15px 30px rgba(230, 161, 0, 0.35));
+}
+
+@keyframes bouquet-appear {
+  0% {
+    transform: scale(0.6) translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.trio-names {
+  font-family: 'Alex Brush', cursive;
+  font-size: 2rem;
+  color: var(--gold-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.trio-names .dot {
+  font-size: 0.75rem;
+  color: var(--gold-primary);
+}
+
+.quote-wrapper {
+  position: relative;
+  margin: 8px 0 16px;
+  padding: 0 16px;
+}
+
+.quote-mark {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.4rem;
+  color: var(--gold-light);
+  line-height: 0;
+  display: inline-block;
+  vertical-align: top;
+  margin-bottom: -15px;
+}
+
+.quote-mark.right {
+  text-align: right;
+  margin-top: 6px;
+}
+
+.final-quote {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1.45;
+  color: #6d4c06;
+  letter-spacing: 0.2px;
+}
+
+.final-wish {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  padding: 0 10px;
+}
+
+.signature {
+  margin-bottom: 20px;
+}
+
+.sign-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  font-style: italic;
+  color: var(--text-dark);
+}
+
+.heart-pulse {
+  font-size: 1.5rem;
+  margin-top: 4px;
+  animation: pulse-heart 1.6s infinite ease-in-out;
+}
+
+@keyframes pulse-heart {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.22); }
+}
+
+.final-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  align-items: center;
+}
+
+.secondary-btn {
+  background: transparent;
+  border: 1px solid var(--gold-primary);
+  color: var(--text-gold);
+  border-radius: var(--radius-btn);
+  padding: 12px 28px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.secondary-btn:hover {
+  background: rgba(255, 215, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+/* Animaciones Generales */
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 1; }
+}
+
+/* Responsive adjustments para pantallas muy pequeñas */
+@media (max-width: 375px) {
+  .card-screen {
+    max-height: 94vh;
+    padding: 8px;
+  }
+  .delicate-border {
+    padding: 24px 16px 20px;
+  }
+  .intro-title {
+    font-size: 1.8rem;
+  }
+  .person-name {
+    font-size: 2.8rem;
+  }
+  .poetic-message {
+    font-size: 1.05rem;
+  }
+  .rose-stage {
+    height: 180px;
+  }
+  .bouquet-stage {
+    height: 180px;
+  }
+}
