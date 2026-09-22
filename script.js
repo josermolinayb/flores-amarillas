@@ -269,30 +269,211 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // -------------------------------------------------------------
-  // 3. MÚSICA AMBIENTAL SUAVE (WEB AUDIO API - SIN EXTERNOS)
+  // 3. MÚSICA AMBIENTAL: "FLORES AMARILLAS" (FLORICIENTA)
+  // Melodía icónica sintetizada en Web Audio API + soporte MP3 opcional
   // -------------------------------------------------------------
   let audioCtx = null;
   let isMusicPlaying = false;
-  let melodyInterval = null;
+  let currentTimer = null;
+  let currentNoteIndex = 0;
 
   const musicToggleBtn = document.getElementById('music-toggle');
   const musicIcon = document.getElementById('music-icon');
   const musicLabel = document.getElementById('music-label');
+  const customAudio = document.getElementById('custom-audio');
 
-  // Arpegio pentatónico cálido y celestial en escala de Do Mayor (C - G - Am - F)
-  // Frecuencias en Hz (Notas dulces tipo caja musical / arpa de viento)
-  const notes = [
-    523.25, // C5
-    587.33, // D5
-    659.25, // E5
-    783.99, // G5
-    880.00, // A5
-    1046.50 // C6
+  // Frecuencias exactas en Hz
+  const FREQS = {
+    'B2': 123.47,
+    'C3': 130.81,
+    'D3': 146.83,
+    'E3': 164.81,
+    'F#3': 185.00,
+    'G3': 196.00,
+    'A3': 220.00,
+    'B3': 246.94,
+    'C4': 261.63,
+    'D4': 293.66,
+    'E4': 329.63,
+    'F#4': 369.99,
+    'G4': 392.00,
+    'A4': 440.00,
+    'B4': 493.88,
+    'C5': 523.25,
+    'D5': 587.33,
+    'E5': 659.25,
+    'F#5': 739.99,
+    'G5': 783.99
+  };
+
+  // Tempo: 126 BPM -> 1 pulso (beat) = ~0.47 segundos
+  const BEAT_MS = 470;
+
+  // Partitura de "Flores Amarillas" de Floricienta (Verso y Estribillo icónico)
+  const FLORICIENTA_SCORE = [
+    // Frase 1: "Él la estaba esperando con una flor amarilla"
+    { note: 'D4', beats: 0.5, bass: 'G3' },
+    { note: 'G4', beats: 0.5 },
+    { note: 'G4', beats: 0.5 },
+    { note: 'G4', beats: 0.5 },
+    { note: 'G4', beats: 0.5 },
+    { note: 'F#4', beats: 0.5 },
+    { note: 'G4', beats: 0.5 },
+    { note: 'A4', beats: 1.0 },
+
+    { note: 'A4', beats: 0.5, bass: 'D3' },
+    { note: 'A4', beats: 0.5 },
+    { note: 'A4', beats: 0.5 },
+    { note: 'B4', beats: 0.5 },
+    { note: 'A4', beats: 0.5 },
+    { note: 'G4', beats: 0.5 },
+    { note: 'F#4', beats: 0.5 },
+    { note: 'G4', beats: 1.5 },
+    { note: null, beats: 0.5 },
+
+    // Frase 2: "Ella lo estaba soñando con la luz en su pupila"
+    { note: 'D4', beats: 0.5, bass: 'E3' },
+    { note: 'G4', beats: 0.5 },
+    { note: 'G4', beats: 0.5 },
+    { note: 'G4', beats: 0.5 },
+    { note: 'G4', beats: 0.5 },
+    { note: 'F#4', beats: 0.5 },
+    { note: 'G4', beats: 0.5 },
+    { note: 'A4', beats: 1.0 },
+
+    { note: 'A4', beats: 0.5, bass: 'D3' },
+    { note: 'A4', beats: 0.5 },
+    { note: 'A4', beats: 0.5 },
+    { note: 'B4', beats: 0.5 },
+    { note: 'A4', beats: 0.5 },
+    { note: 'G4', beats: 0.5 },
+    { note: 'F#4', beats: 0.5 },
+    { note: 'G4', beats: 1.5 },
+    { note: null, beats: 0.5 },
+
+    // Frase 3: "Y el amarillo del sol iluminaba la esquina"
+    { note: 'D4', beats: 0.5, bass: 'B2' },
+    { note: 'B4', beats: 0.5 },
+    { note: 'B4', beats: 0.5 },
+    { note: 'B4', beats: 0.5 },
+    { note: 'C5', beats: 0.5 },
+    { note: 'B4', beats: 0.5 },
+    { note: 'A4', beats: 0.5 },
+    { note: 'G4', beats: 1.0 },
+
+    { note: 'A4', beats: 0.5, bass: 'D3' },
+    { note: 'A4', beats: 0.5 },
+    { note: 'A4', beats: 0.5 },
+    { note: 'B4', beats: 0.5 },
+    { note: 'A4', beats: 0.5 },
+    { note: 'G4', beats: 0.5 },
+    { note: 'F#4', beats: 0.5 },
+    { note: 'G4', beats: 1.5 },
+    { note: null, beats: 0.5 },
+
+    // Frase 4: "Lo sentía tan cercano, lo sentía desde niña"
+    { note: 'G4', beats: 0.5, bass: 'C3' },
+    { note: 'B4', beats: 0.75 },
+    { note: 'D5', beats: 0.75 },
+    { note: 'C5', beats: 0.5 },
+    { note: 'B4', beats: 0.5 },
+    { note: 'A4', beats: 1.0 },
+
+    { note: 'G4', beats: 0.5, bass: 'G3' },
+    { note: 'B4', beats: 0.5 },
+    { note: 'C5', beats: 0.5 },
+    { note: 'B4', beats: 0.5 },
+    { note: 'A4', beats: 0.5 },
+    { note: 'G4', beats: 1.0 },
+    { note: 'G4', beats: 1.5 },
+    { note: null, beats: 1.0 },
+
+    // --- CORO ICÓNICO: "Ella sabía que él sabía que algún día pasaría..." ---
+    { note: 'E4', beats: 0.5, bass: 'E3' },
+    { note: 'G4', beats: 0.5 },
+    { note: 'B4', beats: 0.75 },
+    { note: 'B4', beats: 1.25 },
+    { note: null, beats: 0.25 },
+
+    { note: 'E4', beats: 0.5, bass: 'E3' },
+    { note: 'G4', beats: 0.5 },
+    { note: 'B4', beats: 0.75 },
+    { note: 'B4', beats: 1.25 },
+    { note: null, beats: 0.25 },
+
+    // "que algún día pasaría..."
+    { note: 'B4', beats: 0.5, bass: 'A3' },
+    { note: 'C5', beats: 0.5 },
+    { note: 'B4', beats: 0.5 },
+    { note: 'A4', beats: 0.5 },
+    { note: 'G4', beats: 0.5 },
+    { note: 'A4', beats: 1.5 },
+    { note: null, beats: 0.25 },
+
+    // "que vendría a buscarla..."
+    { note: 'D4', beats: 0.5, bass: 'D3' },
+    { note: 'F#4', beats: 0.5 },
+    { note: 'A4', beats: 0.75 },
+    { note: 'A4', beats: 1.25 },
+    { note: null, beats: 0.25 },
+
+    { note: 'D4', beats: 0.5, bass: 'D3' },
+    { note: 'F#4', beats: 0.5 },
+    { note: 'A4', beats: 0.75 },
+    { note: 'A4', beats: 1.25 },
+    { note: null, beats: 0.25 },
+
+    // "con sus flores amarillas..."
+    { note: 'A4', beats: 0.5, bass: 'G3' },
+    { note: 'B4', beats: 0.5 },
+    { note: 'A4', beats: 0.5 },
+    { note: 'G4', beats: 0.5 },
+    { note: 'F#4', beats: 0.5 },
+    { note: 'G4', beats: 2.0 },
+    { note: null, beats: 0.5 },
+
+    // "No te apures, no detengas el instante del encuentro..."
+    { note: 'E4', beats: 0.5, bass: 'E3' },
+    { note: 'G4', beats: 0.5 },
+    { note: 'B4', beats: 0.75 },
+    { note: 'B4', beats: 1.25 },
+    { note: null, beats: 0.25 },
+
+    { note: 'E4', beats: 0.5, bass: 'E3' },
+    { note: 'G4', beats: 0.5 },
+    { note: 'B4', beats: 0.75 },
+    { note: 'B4', beats: 1.25 },
+    { note: null, beats: 0.25 },
+
+    { note: 'B4', beats: 0.5, bass: 'A3' },
+    { note: 'C5', beats: 0.5 },
+    { note: 'B4', beats: 0.5 },
+    { note: 'A4', beats: 0.5 },
+    { note: 'G4', beats: 0.5 },
+    { note: 'A4', beats: 1.5 },
+    { note: null, beats: 0.25 },
+
+    // "está dicho que es un hecho, no la pierdas, no hay derecho..."
+    { note: 'D4', beats: 0.5, bass: 'D3' },
+    { note: 'F#4', beats: 0.5 },
+    { note: 'A4', beats: 0.75 },
+    { note: 'A4', beats: 1.25 },
+    { note: null, beats: 0.25 },
+
+    { note: 'D4', beats: 0.5, bass: 'D3' },
+    { note: 'F#4', beats: 0.5 },
+    { note: 'A4', beats: 0.75 },
+    { note: 'A4', beats: 1.25 },
+    { note: null, beats: 0.25 },
+
+    { note: 'A4', beats: 0.5, bass: 'G3' },
+    { note: 'B4', beats: 0.5 },
+    { note: 'A4', beats: 0.5 },
+    { note: 'G4', beats: 0.5 },
+    { note: 'F#4', beats: 0.5 },
+    { note: 'G4', beats: 2.2 },
+    { note: null, beats: 2.0 } // Pausa antes de repetir el ciclo
   ];
-
-  // Secuencia melódica suave y serena
-  const sequence = [0, 2, 3, 4, 3, 2, 1, 3, 2, 4, 5, 4, 3, 2, 0, 2];
-  let noteIndex = 0;
 
   function initAudioContext() {
     if (!audioCtx) {
@@ -305,57 +486,135 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /**
-   * Toca una nota con envolvente suave (estilo campana / arpa)
+   * Toca la nota melódica con timbre dulce de caja musical / celesta
    */
-  function playHarpNote(frequency) {
-    if (!audioCtx || !isMusicPlaying) return;
+  function playMelodyNote(freq, durationSec) {
+    if (!audioCtx || !isMusicPlaying || !freq) return;
 
     try {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
+      const now = audioCtx.currentTime;
 
-      // Mezcla sinusoidal con armónico suave para sonido orgánico
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+      // 1. Oscilador Principal (Onda Triangular dulce)
+      const osc1 = audioCtx.createOscillator();
+      const gain1 = audioCtx.createGain();
+      osc1.type = 'triangle';
+      osc1.frequency.setValueAtTime(freq, now);
 
-      // Envolvente de volumen: ataque ultra suave, caída resonante
-      gain.gain.setValueAtTime(0, audioCtx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + 0.08); // Volumen delicado
-      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.8);
+      gain1.gain.setValueAtTime(0, now);
+      gain1.gain.linearRampToValueAtTime(0.09, now + 0.015);
+      gain1.gain.exponentialRampToValueAtTime(0.0001, now + durationSec + 0.5);
 
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
+      osc1.connect(gain1);
+      gain1.connect(audioCtx.destination);
+      osc1.start(now);
+      osc1.stop(now + durationSec + 0.55);
 
-      osc.start();
-      osc.stop(audioCtx.currentTime + 1.85);
+      // 2. Armónico de brillo suave (Campanita dorada)
+      const osc2 = audioCtx.createOscillator();
+      const gain2 = audioCtx.createGain();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(freq * 2, now);
+
+      gain2.gain.setValueAtTime(0, now);
+      gain2.gain.linearRampToValueAtTime(0.03, now + 0.01);
+      gain2.gain.exponentialRampToValueAtTime(0.0001, now + Math.min(durationSec, 0.45));
+
+      osc2.connect(gain2);
+      gain2.connect(audioCtx.destination);
+      osc2.start(now);
+      osc2.stop(now + 0.5);
     } catch (e) {
-      console.warn('Web Audio error:', e);
+      console.warn('Error síntesis nota:', e);
     }
   }
 
+  /**
+   * Toca la nota de bajo suave para dar calidez armónica
+   */
+  function playBassNote(freq, durationSec) {
+    if (!audioCtx || !isMusicPlaying || !freq) return;
+
+    try {
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.06, now + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec + 0.8);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + durationSec + 0.85);
+    } catch (e) {
+      console.warn('Error síntesis bajo:', e);
+    }
+  }
+
+  /**
+   * Programador de notas secuenciales de Floricienta
+   */
+  function scheduleNextNote() {
+    if (!isMusicPlaying) return;
+
+    const item = FLORICIENTA_SCORE[currentNoteIndex];
+    const durationMs = item.beats * BEAT_MS;
+    const durationSec = durationMs / 1000;
+
+    if (item.note && FREQS[item.note]) {
+      playMelodyNote(FREQS[item.note], durationSec);
+    }
+
+    if (item.bass && FREQS[item.bass]) {
+      playBassNote(FREQS[item.bass], Math.max(durationSec * 2, 1.2));
+    }
+
+    currentNoteIndex = (currentNoteIndex + 1) % FLORICIENTA_SCORE.length;
+    currentTimer = setTimeout(scheduleNextNote, durationMs);
+  }
+
   function startGentleMusic() {
-    initAudioContext();
     if (isMusicPlaying) return;
 
+    // Si el usuario incluyó musica.mp3, intentamos reproducirlo
+    if (customAudio && customAudio.querySelector('source')) {
+      const playPromise = customAudio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          isMusicPlaying = true;
+          updateMusicUI(true);
+          return;
+        }).catch(() => {
+          // Si el archivo no existe o falla, usar la síntesis Web Audio
+          startWebAudioFloricienta();
+        });
+        return;
+      }
+    }
+
+    startWebAudioFloricienta();
+  }
+
+  function startWebAudioFloricienta() {
+    initAudioContext();
     isMusicPlaying = true;
     updateMusicUI(true);
-
-    if (melodyInterval) clearInterval(melodyInterval);
-
-    // Reproduce una nota cada 480ms creando una melodía contemplativa
-    melodyInterval = setInterval(() => {
-      const noteFreq = notes[sequence[noteIndex]];
-      playHarpNote(noteFreq);
-      noteIndex = (noteIndex + 1) % sequence.length;
-    }, 520);
+    if (currentTimer) clearTimeout(currentTimer);
+    scheduleNextNote();
   }
 
   function stopGentleMusic() {
     isMusicPlaying = false;
     updateMusicUI(false);
-    if (melodyInterval) {
-      clearInterval(melodyInterval);
-      melodyInterval = null;
+    if (currentTimer) {
+      clearTimeout(currentTimer);
+      currentTimer = null;
+    }
+    if (customAudio) {
+      try { customAudio.pause(); } catch(e) {}
     }
   }
 
@@ -364,7 +623,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (playing) {
       musicToggleBtn.classList.add('playing');
       if (musicIcon) musicIcon.textContent = '🎵';
-      if (musicLabel) musicLabel.textContent = 'Sonido';
+      if (musicLabel) musicLabel.textContent = 'Floricienta';
     } else {
       musicToggleBtn.classList.remove('playing');
       if (musicIcon) musicIcon.textContent = '🔇';
