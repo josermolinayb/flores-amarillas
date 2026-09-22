@@ -280,7 +280,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const musicToggleBtn = document.getElementById('music-toggle');
   const musicIcon = document.getElementById('music-icon');
   const musicLabel = document.getElementById('music-label');
-  const customAudio = document.getElementById('custom-audio');
 
   // Frecuencias exactas en Hz
   const FREQS = {
@@ -476,17 +475,22 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   function initAudioContext() {
-    if (!audioCtx) {
-      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-      audioCtx = new AudioContextClass();
-    }
-    if (audioCtx.state === 'suspended') {
-      audioCtx.resume();
+    try {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    } catch (e) {
+      console.error('AudioContext init error:', e);
     }
   }
 
   /**
    * Toca la nota melódica con timbre dulce de caja musical / celesta
+   * (Usa linearRampToValueAtTime para compatibilidad 100% libre de RangeError)
    */
   function playMelodyNote(freq, durationSec) {
     if (!audioCtx || !isMusicPlaying || !freq) return;
@@ -494,35 +498,35 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const now = audioCtx.currentTime;
 
-      // 1. Oscilador Principal (Onda Triangular dulce)
+      // 1. Oscilador Principal (Onda Triangular: dulce y pura)
       const osc1 = audioCtx.createOscillator();
       const gain1 = audioCtx.createGain();
       osc1.type = 'triangle';
       osc1.frequency.setValueAtTime(freq, now);
 
-      gain1.gain.setValueAtTime(0, now);
-      gain1.gain.linearRampToValueAtTime(0.09, now + 0.015);
-      gain1.gain.exponentialRampToValueAtTime(0.0001, now + durationSec + 0.5);
+      gain1.gain.setValueAtTime(0.001, now);
+      gain1.gain.linearRampToValueAtTime(0.28, now + 0.02);
+      gain1.gain.linearRampToValueAtTime(0.001, now + durationSec + 0.4);
 
       osc1.connect(gain1);
       gain1.connect(audioCtx.destination);
       osc1.start(now);
-      osc1.stop(now + durationSec + 0.55);
+      osc1.stop(now + durationSec + 0.45);
 
-      // 2. Armónico de brillo suave (Campanita dorada)
+      // 2. Armónico de brillo cálido (Campanita dorada / Music Box)
       const osc2 = audioCtx.createOscillator();
       const gain2 = audioCtx.createGain();
       osc2.type = 'sine';
       osc2.frequency.setValueAtTime(freq * 2, now);
 
-      gain2.gain.setValueAtTime(0, now);
-      gain2.gain.linearRampToValueAtTime(0.03, now + 0.01);
-      gain2.gain.exponentialRampToValueAtTime(0.0001, now + Math.min(durationSec, 0.45));
+      gain2.gain.setValueAtTime(0.001, now);
+      gain2.gain.linearRampToValueAtTime(0.09, now + 0.015);
+      gain2.gain.linearRampToValueAtTime(0.001, now + Math.min(durationSec, 0.4));
 
       osc2.connect(gain2);
       gain2.connect(audioCtx.destination);
       osc2.start(now);
-      osc2.stop(now + 0.5);
+      osc2.stop(now + 0.45);
     } catch (e) {
       console.warn('Error síntesis nota:', e);
     }
@@ -541,14 +545,14 @@ document.addEventListener('DOMContentLoaded', () => {
       osc.type = 'sine';
       osc.frequency.setValueAtTime(freq, now);
 
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.06, now + 0.04);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec + 0.8);
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(0.18, now + 0.035);
+      gain.gain.linearRampToValueAtTime(0.001, now + durationSec + 0.6);
 
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.start(now);
-      osc.stop(now + durationSec + 0.85);
+      osc.stop(now + durationSec + 0.65);
     } catch (e) {
       console.warn('Error síntesis bajo:', e);
     }
@@ -577,28 +581,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function startGentleMusic() {
-    if (isMusicPlaying) return;
-
-    // Si el usuario incluyó musica.mp3, intentamos reproducirlo
-    if (customAudio && customAudio.querySelector('source')) {
-      const playPromise = customAudio.play();
-      if (playPromise !== undefined) {
-        playPromise.then(() => {
-          isMusicPlaying = true;
-          updateMusicUI(true);
-          return;
-        }).catch(() => {
-          // Si el archivo no existe o falla, usar la síntesis Web Audio
-          startWebAudioFloricienta();
-        });
-        return;
-      }
-    }
-
-    startWebAudioFloricienta();
-  }
-
-  function startWebAudioFloricienta() {
     initAudioContext();
     isMusicPlaying = true;
     updateMusicUI(true);
@@ -612,9 +594,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (currentTimer) {
       clearTimeout(currentTimer);
       currentTimer = null;
-    }
-    if (customAudio) {
-      try { customAudio.pause(); } catch(e) {}
     }
   }
 
@@ -631,8 +610,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Estado inicial del botón
+  updateMusicUI(false);
+
   if (musicToggleBtn) {
-    musicToggleBtn.addEventListener('click', () => {
+    musicToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
       if (isMusicPlaying) {
         stopGentleMusic();
       } else {
