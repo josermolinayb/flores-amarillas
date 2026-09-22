@@ -13,7 +13,10 @@ Una experiencia web interactiva, delicada y optimizada para celulares para conme
 4. **Paso 3 (Felicitas):** Tercera flor con mensaje tierno y cariñoso.
 5. **Ramillete Final:** Las tres rosas unidas en un lazo dorado con los tres nombres y el mensaje principal:
    > *"Las flores son digitales pero el corazón es real"*
-6. **Música ambiental suave:** Melodía sintetizada en tiempo real mediante *Web Audio API* (sonido cálido tipo arpa / campanitas celestiales) con botón flotante para silenciar o reanudar cuando deseen.
+6. **Música: "Flores Amarillas" (Floricienta):**
+   - Melodía icónica sintetizada en tiempo real mediante *Web Audio API* con timbre dulce de caja musical / campanitas doradas (*"Él la estaba esperando con una flor amarilla..."* y *"Ella sabía que él sabía que algún día pasaría..."*).
+   - Botón flotante para pausar o silenciar en cualquier momento (`🎵 Floricienta` / `🔇 Silencio`).
+   - *(Opcional)*: Si preferís que suene el tema cantado en MP3, solo tenés que guardar el archivo de la canción con el nombre `musica.mp3` en la misma carpeta del proyecto. El sitio lo detectará y reproducirá automáticamente.
 
 ---
 
