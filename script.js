@@ -580,29 +580,53 @@ document.addEventListener('DOMContentLoaded', () => {
     currentTimer = setTimeout(scheduleNextNote, durationMs);
   }
 
-  const bgAudio = new Audio('musica.mp3');
-  bgAudio.loop = true;
+  const bgAudio = document.getElementById('bg-audio');
+  if (bgAudio) {
+    bgAudio.playsInline = true;
+  }
+
+  function configureAudioSession() {
+    // Configura categoría 'playback' en iOS 16.4+ para saltar el modo silencio
+    if ('audioSession' in navigator) {
+      try {
+        navigator.audioSession.type = 'playback';
+      } catch (e) {
+        console.warn('AudioSession error:', e);
+      }
+    }
+  }
+
+  // Desbloqueo inicial al primer toque en iOS
+  document.addEventListener('touchstart', function unlockAudioOnFirstTouch() {
+    configureAudioSession();
+  }, { passive: true, once: true });
 
   function startGentleMusic() {
+    configureAudioSession();
     initAudioContext(); // Desbloqueo síncrono del Web Audio en el gesto del usuario
     isMusicPlaying = true;
     updateMusicUI(true);
 
-    // Intentar reproducir archivo mp3 original si el usuario lo colocó
-    const playPromise = bgAudio.play();
-    if (playPromise !== undefined) {
-      playPromise.then(() => {
-        // Archivo mp3 encontrado y reproduciendo voz original
-        if (currentTimer) clearTimeout(currentTimer);
-      }).catch(() => {
-        // Si no está el archivo mp3, suena la melodía de Floricienta sintetizada
-        if (currentTimer) clearTimeout(currentTimer);
-        scheduleNextNote();
-      });
-    } else {
-      if (currentTimer) clearTimeout(currentTimer);
-      scheduleNextNote();
+    if (bgAudio) {
+      bgAudio.muted = false;
+      bgAudio.volume = 1.0;
+
+      const playPromise = bgAudio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          // Archivo mp3 reproduciendo exitosamente
+          if (currentTimer) clearTimeout(currentTimer);
+        }).catch((err) => {
+          console.warn('bgAudio falló, usando síntesis Web Audio:', err);
+          if (currentTimer) clearTimeout(currentTimer);
+          scheduleNextNote();
+        });
+        return;
+      }
     }
+
+    if (currentTimer) clearTimeout(currentTimer);
+    scheduleNextNote();
   }
 
   function stopGentleMusic() {
@@ -612,9 +636,11 @@ document.addEventListener('DOMContentLoaded', () => {
       clearTimeout(currentTimer);
       currentTimer = null;
     }
-    try {
-      bgAudio.pause();
-    } catch (e) {}
+    if (bgAudio) {
+      try {
+        bgAudio.pause();
+      } catch (e) {}
+    }
   }
 
   function updateMusicUI(playing) {
@@ -632,6 +658,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Estado inicial del botón
   updateMusicUI(false);
+
+  // Mostrar pista de modo silencio solo en iPhone / iPad
+  const iosHint = document.getElementById('ios-hint');
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if (iosHint && !isIOS) {
+    iosHint.style.display = 'none';
+  }
 
   if (musicToggleBtn) {
     musicToggleBtn.addEventListener('click', (e) => {

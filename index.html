@@ -20,6 +20,9 @@
   <!-- Canvas de fondo para pétalos flotantes y destellos de luz -->
   <canvas id="petals-canvas"></canvas>
 
+  <!-- Elemento de audio en el DOM optimizado para iOS Safari y Android -->
+  <audio id="bg-audio" src="musica.mp3" preload="auto" playsinline webkit-playsinline loop></audio>
+
   <!-- Botón flotante de música ambiental: Floricienta -->
   <button id="music-toggle" class="music-btn" aria-label="Control de música" title="Música: Flores Amarillas">
     <span class="music-icon" id="music-icon">🎵</span>
@@ -54,6 +57,7 @@
         </button>
 
         <p class="tap-hint">Tocá para abrir y vivir la experiencia</p>
+        <p class="ios-hint" id="ios-hint">🔔 En iPhone: Verificá tener el interruptor lateral de silencio desactivado</p>
       </div>
     </section>
 

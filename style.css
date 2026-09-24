@@ -300,6 +300,18 @@ html, body {
   opacity: 0.75;
 }
 
+.ios-hint {
+  font-size: 0.72rem;
+  color: var(--text-gold);
+  margin-top: 10px;
+  background: rgba(255, 230, 150, 0.25);
+  border: 1px dashed rgba(230, 161, 0, 0.4);
+  padding: 6px 12px;
+  border-radius: 12px;
+  line-height: 1.4;
+  max-width: 320px;
+}
+
 /* ==================== VISTA DE LAS FLORES (SABRINA, SOLANA, FELICITAS) ==================== */
 .rose-stage {
   width: 100%;
